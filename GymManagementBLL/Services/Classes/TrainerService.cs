@@ -101,18 +101,47 @@ namespace GymManagementBLL.Services.Classes
         {
            var Repo = _unitOfWork.GetRepository<Trainer>();
             var TrainerToRemove = Repo.GetById(TrainerId);
-            if (TrainerToRemove is null || HasActiveSessions(TrainerId)) return false;
+            if (TrainerToRemove is null) return false;
+
+            var SessionIds = _unitOfWork.GetRepository<MemberSession>()
+                .GetAll(b => b.MemberId == TrainerId).Select(X => X.Id);
+            var HasFutureSessions = _unitOfWork.GetRepository<Session>().GetAll(
+                X => SessionIds.Contains(X.Id) && X.StartDate > DateTime.Now).Any();
+
+            if (HasFutureSessions) return false;
+
+            var memberShipRepo = _unitOfWork.GetRepository<MemberShip>();
+            var MemberShips = memberShipRepo.GetAll(X => X.MemberId == TrainerId);
+
+            if( MemberShips.Any())
+                {
+                foreach (var membership in MemberShips)
+                {
+                    memberShipRepo.Delete(membership);
+                }
+            }
             Repo.Delete(TrainerToRemove);
             return _unitOfWork.SaveChanges() > 0;
-          
+
+
+            //Repo.Delete(TrainerToRemove);
+            //return _unitOfWork.SaveChanges() > 0;
+
+
+
         }
 
         public bool UpdateTrainerDetails(TrainerToUpdateViewModel UpdateTrainer, int TrainerId)
         {
+           
             var Repo = _unitOfWork.GetRepository<Trainer>();
-            var TrainerToUpdate = Repo.GetById(TrainerId);
-            if (TrainerToUpdate is null || IsEmailExist(UpdateTrainer.Email) || IsPhoneExist(UpdateTrainer.Phone)) return false;
+            
 
+            var EmailExsits = _unitOfWork.GetRepository<Trainer>().GetAll(X => X.Email == UpdateTrainer.Email && X.Id != TrainerId);
+            var PhoneExsits = _unitOfWork.GetRepository<Trainer>().GetAll(X => X.Phone == UpdateTrainer.Phone && X.Id != TrainerId);
+            if (EmailExsits.Any() || PhoneExsits.Any()) return false;
+
+            var TrainerToUpdate = Repo.GetById(TrainerId);
             TrainerToUpdate.Email = UpdateTrainer.Email;
             TrainerToUpdate.Phone = UpdateTrainer.Phone;
             TrainerToUpdate.Address.BuildingNumber = UpdateTrainer.BuildingNumber;
@@ -140,12 +169,12 @@ namespace GymManagementBLL.Services.Classes
             return existing;
 
         }
-        private bool HasActiveSessions(int TrainerId)
-        {
-            var ActiveSessions = _unitOfWork.GetRepository<Session>().GetAll(
-                S => S.TrainerId == TrainerId && S.StartDate > DateTime.Now).Any();
-            return ActiveSessions;
-        }
+        //private bool HasActiveSessions(int TrainerId)
+        //{
+        //    var ActiveSessions = _unitOfWork.GetRepository<Session>().GetAll(
+        //        S => S.TrainerId == TrainerId && S.StartDate > DateTime.Now).Any();
+        //    return ActiveSessions;
+        //}
         #endregion
     }
 }

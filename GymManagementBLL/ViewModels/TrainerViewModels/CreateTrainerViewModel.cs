@@ -12,8 +12,8 @@ namespace GymManagementBLL.ViewModels.TrainerViewModels
     public class CreateTrainerViewModel
     {
         [Required(ErrorMessage = "Name Is Required")]
-        [StringLength(50, MinimumLength = 2, ErrorMessage = "Nmae Must Br Between 2 And 50 Char")]
-        [RegularExpression(@"^[a-zA-Z\S]+$", ErrorMessage = "Name Can Contain Only Letters And Spaces")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Name Must Br Between 2 And 50 Char")]
+        [RegularExpression(@"^[a-z A-Z\S]+$", ErrorMessage = "Name Can Contain Only Letters And Spaces")]
         public string Name { get; set; } = null!;
 
         [Required(ErrorMessage = "Email Is Required")]
@@ -52,7 +52,7 @@ namespace GymManagementBLL.ViewModels.TrainerViewModels
         [RegularExpression(@"^[a-zA-Z\S]+$", ErrorMessage = "City Can Contain Only Letters And Spaces")]
         public string City { get; set; } = null!;
 
-        [Required(ErrorMessage = "Health Record Is Required")]
-        public HealthRecordViewModel HealthRecordViewModel { get; set; } = null!;
+        //[Required(ErrorMessage = "Health Record Is Required")]
+        //public HealthRecordViewModel HealthRecordViewModel { get; set; } = null!;
     }
 }

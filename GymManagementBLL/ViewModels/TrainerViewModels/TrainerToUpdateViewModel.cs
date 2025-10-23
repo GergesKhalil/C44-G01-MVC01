@@ -42,7 +42,7 @@ namespace GymManagementBLL.ViewModels.TrainerViewModels
         [RegularExpression(@"^[a-zA-Z\S]+$", ErrorMessage = "City Can Contain Only Letters And Spaces")]
         public string City { get; set; } = null!;
 
-        [Required(ErrorMessage = "Health Record Is Required")]
-        public HealthRecordViewModel HealthRecordViewModel { get; set; } = null!;
+        //[Required(ErrorMessage = "Health Record Is Required")]
+        //public HealthRecordViewModel HealthRecordViewModel { get; set; } = null!;
     }
 }

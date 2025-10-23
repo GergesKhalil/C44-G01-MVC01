@@ -136,7 +136,7 @@ namespace GymManagementBLL.Services.Classes
             return new MemberToUpdateViewModel()
             {
                 Email = Member.Email,
-                Nmae = Member.Name,
+                Name = Member.Name,
                 Phone = Member.Phone,
                 Photo = Member.Photo,
                 BuildingNumber = Member.Address.BuildingNumber,
@@ -154,9 +154,12 @@ namespace GymManagementBLL.Services.Classes
 
             var Member = MemberRepo.GetById(MemberId);
             if (Member is null) return false;
-            var HasActiveMemberSessions = _unitOfWork.GetRepository<MemberSession>()
-                .GetAll(X => X.MemberId == MemberId && X.Session.StartDate > DateTime.Now).Any();
-            if (HasActiveMemberSessions) return false;
+            var SessionIds = _unitOfWork.GetRepository<MemberSession>()
+                .GetAll(X => X.MemberId == MemberId ).Select(X => X.SessionId);
+            var HasFutureSessions = _unitOfWork.GetRepository<Session>().GetAll(
+                X => SessionIds.Contains(X.Id) && X.StartDate > DateTime.Now).Any();
+
+            if (HasFutureSessions) return false;
 
             var MemberShipRepo = _unitOfWork.GetRepository<MemberShip>();
 
@@ -186,7 +189,13 @@ namespace GymManagementBLL.Services.Classes
         {
             try
             {
-                if (IsEmailExists(updateMember.Email) || IsPhoneExists(updateMember.Phone)) return false;
+               var EmailExists = _unitOfWork.GetRepository<Member>()
+                    .GetAll(X => X.Email == updateMember.Email && X.Id != Id);
+
+               var PhoneExists = _unitOfWork.GetRepository<Member>()
+                    .GetAll(X => X.Phone == updateMember.Phone && X.Id != Id);
+                if (EmailExists.Any() || PhoneExists.Any()) return false;
+
                 var Repo = _unitOfWork.GetRepository<Member>();
 
                 var Member = Repo.GetById(Id);
@@ -205,6 +214,7 @@ namespace GymManagementBLL.Services.Classes
                 return false;
             }
         }
+
         #region Helper Methods
         private bool IsEmailExists(string email)
         {
