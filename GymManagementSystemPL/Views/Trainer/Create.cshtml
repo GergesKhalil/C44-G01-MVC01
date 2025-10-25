@@ -79,12 +79,16 @@
             <hr class="mt-2">
         </div>
         <div class="row g-3">
+
             <div class="col-12">
-                <label class="form-label fw-semibold">
-                    Specializations <span class="text-danger">*</span>
+                <label asp-for="Specialties" class="form-label fw-semibold">
+                    <select asp-for="Specialties" asp-items="Html.GetEnumSelectList<Specialties>()" class="form-select">
+                        <option value="">-- Select Specialization --</option>
+                    </select>
+                    <span asp-validation-for="Specialties" class="text-danger"></span>
                 </label>
 
-                <div class="form-check">
+                @* <div class="form-check">
                     <input class="form-check-input" type="radio" name="Specialties"
                            value="GeneralFitness" />
                     <label class="form-check-label">GeneralFitness</label>
@@ -100,7 +104,7 @@
                 <div class="form-check">
                     <input asp-for="Specialties" class="form-check-input" type="radio" name="Specialties" value="CrossFit" />
                     <label asp-for="Specialties" class="form-check-label">CrossFit</label>
-                </div>
+                </div> *@
             </div>
         </div>
 

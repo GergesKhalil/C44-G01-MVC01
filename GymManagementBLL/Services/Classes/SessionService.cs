@@ -117,6 +117,20 @@ namespace GymManagementBLL.Services.Classes
             }
         }
 
+        public IEnumerable<CategorySelectViewModel> GetAllCategoriesForDropDown()
+        {
+            var Categories = _unitOfWork.GetRepository<Category>().GetAll();
+            return _mapper.Map<IEnumerable<CategorySelectViewModel>>(Categories);
+        }
+
+        public IEnumerable<TrainerSelectViewModel> GetAllTrainersForDropDown()
+        {
+            var Trainers = _unitOfWork.GetRepository<Trainer>().GetAll();
+            return _mapper.Map<IEnumerable<TrainerSelectViewModel>>(Trainers);
+        }
+
+
+
         #region Helper Methods
 
         private bool IsSessionAvailableForUpdating(Session session)
@@ -154,10 +168,10 @@ namespace GymManagementBLL.Services.Classes
         }
         private bool IsDateTimeValid(DateTime StartDate , DateTime EndDate)
         {
-            return StartDate < EndDate;
+            return StartDate < EndDate&& DateTime.Now < StartDate;
         }
 
-
+       
 
         #endregion
 

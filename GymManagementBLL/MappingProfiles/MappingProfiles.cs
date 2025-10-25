@@ -50,6 +50,10 @@ namespace GymManagementBLL
             //    .ForMember(dest => dest.Address.Street, Options => Options.MapFrom(src => src.Street))
             //    .ForMember(dest => dest.Address.City, Options => Options.MapFrom(src => src.City));
 
+             CreateMap<Trainer, TrainerSelectViewModel>(); 
+            CreateMap<Category, CategorySelectViewModel>()
+                    .ForMember(dest => dest.Name,Options => Options.MapFrom(Src => Src.CategoryName));
+
 
             //#endregion
 
